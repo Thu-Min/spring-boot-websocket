@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat App</title>
+</head>
+<body>
+    <h2>Chat Room</h2>
+    <div id="chatBox" style="border: 1px solid #000; height: 300px; width: 400px; overflow-y: scroll;">
+    </div>
+    <br>
+    <input type="text" id="messageInput" placeholder="Enter your message" />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        // Open a WebSocket connection to the server
+        const socket = new WebSocket("ws://localhost:8080/chat");
+
+        // Handle the connection open event
+        socket.onopen = function() {
+            console.log("Connected to WebSocket server");
+        };
+
+        // Handle incoming messages
+        socket.onmessage = function(event) {
+            const chatBox = document.getElementById("chatBox");
+            const newMessage = document.createElement("div");
+            newMessage.textContent = event.data;
+            chatBox.appendChild(newMessage);
+        };
+
+        // Send a message when the "Send" button is clicked
+        function sendMessage() {
+            const messageInput = document.getElementById("messageInput").value;
+            socket.send(messageInput);
+        }
+
+        // Handle the connection close event
+        socket.onclose = function() {
+            console.log("Disconnected from WebSocket server");
+        };
+    </script>
+</body>
+</html>
